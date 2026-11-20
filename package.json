@@ -1,0 +1,25 @@
+{
+  "name": "gregg-shorthand-trainer",
+  "version": "1.0.0",
+  "description": "Progressive Gregg Shorthand reading trainer with static and animated stroke rendering.",
+  "main": "docs/index.html",
+  "scripts": {
+    "test": "node tests/verify.js"
+  },
+  "keywords": [
+    "gregg",
+    "shorthand",
+    "trainer",
+    "quiz",
+    "capacitor"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/core": "^8.5.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.5.2"
+  }
+}

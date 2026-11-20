@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gregg Shorthand Trainer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-shell">
+        <!-- Top Navigation Bar -->
+        <header class="top-nav">
+            <div class="brand-group">
+                <div class="brand-mark" aria-hidden="true">〰</div>
+                <div>
+                    <h1 class="brand-title">Gregg Shorthand</h1>
+                    <div id="active-context-badge" class="context-badge">Lesson 1 · 1. Strokes</div>
+                </div>
+            </div>
+            <div class="nav-actions">
+                <button id="nav-lessons-btn" class="btn btn-secondary" type="button">Lessons</button>
+                <button id="nav-intro-btn" class="btn btn-secondary" type="button">Intro Guide</button>
+                <button id="nav-settings-btn" class="btn btn-icon" type="button" title="Settings" aria-label="Settings">⚙️</button>
+            </div>
+        </header>
+
+        <!-- Quiz View -->
+        <main id="quiz-view" class="main-card">
+            <!-- Stage Selector Bar -->
+            <div class="stage-bar-wrapper">
+                <div id="stage-tabs" class="stage-tabs" role="tablist" aria-label="Lesson stages"></div>
+                <div id="proficiency-strip" class="proficiency-strip">
+                    <div id="proficiency-pips" class="proficiency-pips"></div>
+                    <div id="proficiency-text" class="proficiency-text"></div>
+                </div>
+            </div>
+
+            <!-- Question Header -->
+            <div class="question-header">
+                <div class="question-meta">
+                    <span id="quiz-mode-badge" class="meta-pill">Read Outline</span>
+                    <span class="meta-pill">Difficulty: <span id="difficulty-stars">⭐</span></span>
+                </div>
+                <button id="skip-btn" class="btn btn-muted btn-sm" type="button" title="Skip round (S)">Skip</button>
+            </div>
+
+            <h2 id="question-title" class="question-title">Loading...</h2>
+
+            <!-- Stage Toolbar -->
+            <div class="stage-toolbar">
+                <div class="toolbar-left">
+                    <div class="segmented-control" role="group" aria-label="Render Mode">
+                        <button id="mode-animated-btn" class="seg-btn active" type="button">Animated</button>
+                        <button id="mode-static-btn" class="seg-btn" type="button">Static</button>
+                    </div>
+                    <button id="replay-all-btn" class="btn btn-soft btn-sm" type="button" title="Replay pen animation (R)">▶ Replay Pen</button>
+                    <button id="hint-toggle-btn" class="btn btn-soft btn-sm" type="button" title="Toggle phonetic hint (H)">💡 Hint</button>
+                </div>
+                <div class="stroke-legend">
+                    <span class="legend-item"><span class="legend-dot dot-start"></span>Start Point</span>
+                    <span class="legend-item"><span class="legend-dot dot-pen"></span>Pen Tip Direction</span>
+                </div>
+            </div>
+
+            <!-- Dynamic Quiz Content -->
+            <div id="game-area" class="game-area"></div>
+
+            <!-- Phonetic & Stroke Hint Banner -->
+            <div id="hint-banner" class="hint-banner hidden">
+                <div class="hint-copy">
+                    <span class="hint-label">Phonetic &amp; Stroke Guide</span>
+                    <span id="hint-text" class="hint-text"></span>
+                </div>
+                <code id="phonetic-code" class="phonetic-code"></code>
+            </div>
+
+            <!-- Feedback & Unlock Deck -->
+            <div id="feedback-deck" class="feedback-deck hidden">
+                <div class="feedback-top">
+                    <div class="feedback-status-wrap">
+                        <span id="feedback-badge" class="status-tag">Correct!</span>
+                        <span id="feedback-points" class="points-tag"></span>
+                    </div>
+                    <button id="next-btn" class="btn btn-primary" type="button">Next →</button>
+                </div>
+                <div id="feedback-detail" class="feedback-detail"></div>
+                <div id="unlock-banner" class="unlock-banner hidden">
+                    <div id="unlock-message" class="unlock-message"></div>
+                    <button id="unlock-cta-btn" class="btn btn-success btn-sm" type="button"></button>
+                </div>
+            </div>
+
+            <!-- Scoreboard (Bird-App Heritage) -->
+            <section class="score-board">
+                <div class="score-main-row">
+                    <div class="score-primary">
+                        <div class="score-headline"><span id="ratio">0</span>% of <span id="total-rounds">0</span></div>
+                        <div class="streak-line">Streak: <strong id="streak-val">0</strong> · Best: <strong id="best-streak-val">0</strong></div>
+                        <div id="score-details" class="score-details hidden">
+                            <span>Wins: <strong id="wins">0</strong></span>
+                            <span>Losses: <strong id="losses">0</strong></span>
+                            <span>Points: <strong id="points">0</strong></span>
+                        </div>
+                    </div>
+                    <div class="score-actions">
+                        <button id="toggle-details-btn" class="btn btn-secondary btn-sm" type="button" title="Toggle Score Details">Details</button>
+                        <button id="toggle-history-btn" class="btn btn-secondary btn-sm" type="button" title="Toggle Round History">History</button>
+                        <button id="reset-score-btn" class="btn btn-danger-outline btn-sm" type="button">Reset Score</button>
+                    </div>
+                </div>
+                <div id="history-section" class="history-section hidden">
+                    <h3>Recent Rounds</h3>
+                    <ul id="history-list" class="history-list"></ul>
+                </div>
+            </section>
+        </main>
+
+        <!-- Lessons Roadmap View -->
+        <section id="lessons-view" class="main-card hidden">
+            <div class="roadmap-header">
+                <div>
+                    <h2>Lesson Roadmap</h2>
+                    <p class="muted-text">Master each stage (Strokes → Words → Phrases) to unlock the next lesson linearly.</p>
+                </div>
+                <button id="back-to-quiz-btn" class="btn btn-primary" type="button">← Back to Quiz</button>
+            </div>
+
+            <div id="cumulative-card" class="cumulative-card">
+                <div>
+                    <div class="cumulative-title">Cumulative Review Mode</div>
+                    <div id="cumulative-subtitle" class="muted-text">Mix all unlocked lessons together to sharpen reading speed.</div>
+                </div>
+                <button id="start-cumulative-btn" class="btn btn-primary" type="button">Practice Mixed Review →</button>
+            </div>
+
+            <div id="lessons-list" class="lessons-list"></div>
+        </section>
+    </div>
+
+    <!-- Lesson Intro Modal -->
+    <div id="intro-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="intro-modal-title">
+        <div class="modal-content modal-wide">
+            <button id="close-intro-btn" class="modal-close" type="button" aria-label="Close">&times;</button>
+            <div id="intro-lesson-pill" class="meta-pill">Lesson 1</div>
+            <h2 id="intro-modal-title">Lesson Title</h2>
+            <p id="intro-summary" class="intro-summary"></p>
+
+            <div class="intro-rules-box">
+                <h3>Key Principles</h3>
+                <ul id="intro-rules-list" class="intro-rules-list"></ul>
+            </div>
+
+            <div class="intro-section">
+                <h3>New Strokes &amp; Forms <span class="muted-inline">(click any card to replay)</span></h3>
+                <div id="intro-strokes-grid" class="intro-canvas-grid"></div>
+            </div>
+
+            <div class="intro-section">
+                <h3>Example Outlines</h3>
+                <div id="intro-examples-grid" class="intro-canvas-grid"></div>
+            </div>
+
+            <div class="modal-footer">
+                <button id="intro-start-btn" class="btn btn-primary" type="button">Start Strokes Quiz →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inspect Lightbox Modal -->
+    <div id="lightbox-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="lightbox-title">
+        <div class="modal-content modal-wide">
+            <button id="close-lightbox-btn" class="modal-close" type="button" aria-label="Close">&times;</button>
+            <h3 id="lightbox-title">Inspect Outline</h3>
+            <div class="lightbox-controls">
+                <button id="lightbox-slow-btn" class="btn btn-soft btn-sm" type="button">▶ Replay Slow</button>
+                <button id="lightbox-normal-btn" class="btn btn-soft btn-sm" type="button">▶ Replay Normal</button>
+                <button id="lightbox-static-btn" class="btn btn-secondary btn-sm" type="button">Static View</button>
+            </div>
+            <div class="canvas-stage lightbox-stage">
+                <canvas id="lightbox-canvas" width="660" height="240"></canvas>
+            </div>
+            <div id="lightbox-info" class="lightbox-info"></div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+        <div class="modal-content">
+            <button id="close-settings-btn" class="modal-close" type="button" aria-label="Close">&times;</button>
+            <h2 id="settings-title">Settings</h2>
+
+            <div class="settings-group">
+                <h3>Appearance &amp; Stroke Display</h3>
+                <label class="toggle-row">
+                    <input type="checkbox" id="setting-dark-mode">
+                    <span>Enable Dark Mode</span>
+                </label>
+                <label class="toggle-row">
+                    <input type="checkbox" id="setting-direction-guides">
+                    <span>Show Direction Chevrons in Static Mode</span>
+                </label>
+                <div class="select-row">
+                    <label for="setting-render-mode">Default Render Mode</label>
+                    <select id="setting-render-mode">
+                        <option value="animated">Animated Pen Trace</option>
+                        <option value="static">Static Outline</option>
+                    </select>
+                </div>
+                <div class="select-row">
+                    <label for="setting-anim-speed">Animation Speed</label>
+                    <select id="setting-anim-speed">
+                        <option value="slow">Slow</option>
+                        <option value="normal">Normal</option>
+                        <option value="fast">Fast</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <h3>Difficulty Range</h3>
+                <div class="diff-sliders">
+                    <div>
+                        <label for="setting-min-diff">Min: <span id="min-diff-val">1</span>⭐</label>
+                        <input type="range" id="setting-min-diff" min="1" max="3" value="1">
+                    </div>
+                    <div>
+                        <label for="setting-max-diff">Max: <span id="max-diff-val">3</span>⭐</label>
+                        <input type="range" id="setting-max-diff" min="1" max="3" value="3">
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <h3>Game Modes</h3>
+                <div id="setting-quiz-types" class="checkbox-list"></div>
+            </div>
+
+            <div class="settings-group">
+                <h3>Mastery Progression</h3>
+                <div class="select-row">
+                    <label for="setting-window-size">Trailing Window Size</label>
+                    <select id="setting-window-size">
+                        <option value="5">Last 5 attempts</option>
+                        <option value="8">Last 8 attempts</option>
+                        <option value="10">Last 10 attempts</option>
+                    </select>
+                </div>
+                <div class="select-row">
+                    <label for="setting-threshold">Unlock Threshold</label>
+                    <select id="setting-threshold">
+                        <option value="75">75%</option>
+                        <option value="80">80%</option>
+                        <option value="90">90%</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <h3>Reset Proficiency</h3>
+                <div id="settings-lesson-resets" class="settings-reset-list"></div>
+                <button id="setting-reset-all-btn" class="btn btn-danger" type="button" style="width: 100%; margin-top: 10px;">Reset All Progress</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirm-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+        <div class="modal-content modal-narrow">
+            <h3 id="confirm-title">Confirm Action</h3>
+            <p id="confirm-message"></p>
+            <div class="modal-footer">
+                <button id="confirm-cancel-btn" class="btn btn-secondary" type="button">Cancel</button>
+                <button id="confirm-ok-btn" class="btn btn-danger" type="button">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/gregg_geometry.js"></script>
+    <script src="js/stroke_renderer.js"></script>
+    <script src="js/curriculum_data.js"></script>
+    <script src="js/progression.js"></script>
+    <script src="js/quiz_engine.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
